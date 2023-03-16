@@ -1,0 +1,5 @@
+# exclude everything in the following folder
+data/*
+
+# exclude every file 
+**/.DS_Store
