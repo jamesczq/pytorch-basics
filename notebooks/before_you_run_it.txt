@@ -1,0 +1,8 @@
+Before running any command (including starting a Jupyter notebook), do
+    conda activate myenv
+
+To make this env available to begin with, do
+    conda create --name myenv python=3.9
+    conda activate myenv
+    # Afterwards, all intended packages will be done via
+    conda install pkg1 pkg2
