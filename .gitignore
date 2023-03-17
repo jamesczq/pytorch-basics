@@ -3,6 +3,7 @@ data/*
 **/.ipynb_checkpoint/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+__pycache__/
 
 # exclude every file 
 **/.DS_Store
