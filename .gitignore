@@ -1,6 +1,8 @@
 # exclude everything in the following folder
 data/*
 **/.ipynb_checkpoint/
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
 # exclude every file 
 **/.DS_Store
