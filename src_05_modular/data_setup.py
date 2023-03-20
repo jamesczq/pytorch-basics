@@ -8,6 +8,7 @@ import torch
 import torchvision
 
 NUM_WORKERS = os.cpu_count()
+NUM_WORKERS = 0
 
 
 def create_dataloaders(
@@ -34,3 +35,27 @@ def create_dataloaders(
          create_dataloaders(
             tr_dir, tst_dir, transform, batch_size, num_workers)
     """
+    # Use ImageFolder to create dataset(s)
+    train_data = torchvision.datasets.ImageFolder(train_dir, transform=transform)
+    test_data = torchvision.datasets.ImageFolder(test_dir, transform=transform)
+
+    class_names = train_data.classes
+
+    # Turn images to dataloaders
+    train_dataloader = torch.utils.data.DataLoader(
+        train_data,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+
+    test_dataloader = torch.utils.data.DataLoader(
+        test_data,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=True,
+    )
+
+    return train_dataloader, test_dataloader, class_names
