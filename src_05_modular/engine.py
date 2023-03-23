@@ -146,5 +146,11 @@ def train(
             f"Train loss: {train_loss:.4f}, Train acc: {train_acc:.4f} | ",
             f"Test loss: {test_loss:.4f}, Test acc: {test_acc:.4f}",
         )
+        
+        # Update results dictionary
+        results["train_loss"].append(train_loss)
+        results["train_acc"].append(train_acc)
+        results["test_loss"].append(test_loss)
+        results["test_acc"].append(test_acc)
 
     return results
