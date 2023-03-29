@@ -5,6 +5,8 @@ data/*
 */.ipynb_checkpoints/*
 __pycache__/
 models/
+runs/
+**/runs/
 
 # exclude every file 
 **/.DS_Store

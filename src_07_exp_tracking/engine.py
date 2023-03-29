@@ -1,8 +1,10 @@
 """
 Contains functions for training/testing a PyTorch model.
 """
+import os
 import torch
 
+from datetime import datetime
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 
@@ -104,6 +106,34 @@ def test_step(
         return test_loss, test_acc
 
 
+def create_writer(
+    experiment_name: str, model_name: str, extra: str
+) -> torch.utils.tensorboard.writer.SummaryWriter():
+    """
+    Create a tensorboard SummaryWriter instance to save to special-named log_dir as follows:
+    runs/YYYY-MM-DD/experiment_name/model_name/extra.
+
+    Args:
+     ***
+
+    Returns:
+     Instance of torch.utils.tensorboard.writer.SummaryWriter()
+
+    Example:
+        ***
+    """
+    time_stamp = datetime.now().strftime("%Y-%m-%d")
+
+    if extra:
+        log_dir = os.path.join("runs", time_stamp, experiment_name, model_name, extra)
+    else:
+        log_dir = os.path.join("runs", time_stamp, experiment_name, model_name)
+
+    print(f"[INFO] Created SummaryWriter: saving to {log_dir}...")
+
+    return torch.utils.tensorboard.writer.SummaryWriter(log_dir=log_dir)
+
+
 def train(
     model: torch.nn.Module,
     train_dataloader: torch.utils.data.DataLoader,
@@ -112,7 +142,7 @@ def train(
     loss_fn: torch.nn.Module,
     epochs: int,
     device: torch.device,
-    writer: torch.utils.tensorboard.SummaryWriter
+    writer: torch.utils.tensorboard.SummaryWriter,
 ) -> Dict[str, List]:
     """
     Defines the training loop over multiple epochs.
@@ -147,33 +177,35 @@ def train(
             f"Train loss: {train_loss:.4f}, Train acc: {train_acc:.4f} | ",
             f"Test loss: {test_loss:.4f}, Test acc: {test_acc:.4f}",
         )
-        
+
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["train_acc"].append(train_acc)
         results["test_loss"].append(test_loss)
         results["test_acc"].append(test_acc)
-        
+
         # New: add experiment tracking device: tensorboard.SummaryWriter()
         writer.add_scalars(
             main_tag="Loss",
-            tag_scalar_dict={"train_loss":train_loss, "test_loss":test_loss},
-            global_step=epoch)
-   
+            tag_scalar_dict={"train_loss": train_loss, "test_loss": test_loss},
+            global_step=epoch,
+        )
+
         writer.add_scalars(
             main_tag="Accuracy",
-            tag_scalar_dict={"train_acc":train_acc, "test_acc":test_acc},
-            global_step=epoch)
-        
+            tag_scalar_dict={"train_acc": train_acc, "test_acc": test_acc},
+            global_step=epoch,
+        )
+
         # Tracking the Pytorch model architecture
         writer.add_graph(
             model=model,
             # Pass in an example input
-            input_to_model=torch.randn(32, 3, 224, 224).to(device))
-        
+            input_to_model=torch.randn(32, 3, 224, 224).to(device),
+        )
+
     print(f"\n>>>Tensorboard logs saved in {writer.log_dir}\n")
-        
+
     writer.close()
-        
 
     return results
